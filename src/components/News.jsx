@@ -21,10 +21,10 @@ const News = ({ category }) => {
     try {
       const url = search
         ? `https://newsapi.org/v2/everything?q=${search}&apiKey=${
-            import.meta.env.VITE_API_KEY
+            import.meta.env.REACT_APP_API_KEY
           }`
         : `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${
-            import.meta.env.VITE_API_KEY
+            import.meta.env.REACT_APP_API_KEY
           }`;
 
       const response = await fetch(url);
