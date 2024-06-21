@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Shimmer from "./Shimmer";
 import Favorites from "./Favorites";
-import {toggleFavorite, totalPages } from "../utils/helper";
+import { toggleFavorite } from "../utils/helper";
 
 const News = ({ category }) => {
   const [articles, setArticles] = useState([]);
@@ -21,10 +21,10 @@ const News = ({ category }) => {
     try {
       const url = search
         ? `https://newsapi.org/v2/everything?q=${search}&apiKey=${
-            import.meta.env.REACT_APP_API_KEY
+            import.meta.env.VITE_API_KEY
           }`
         : `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${
-            import.meta.env.REACT_APP_API_KEY
+            import.meta.env.VITE_API_KEY
           }`;
 
       const response = await fetch(url);
@@ -51,6 +51,8 @@ const News = ({ category }) => {
     setIsLoading(true);
     fetchNews(searchQuery);
   };
+  const totalPages = Math.ceil(articles.length / 10);
+
   const handleToggleFavorite = (article) => {
     toggleFavorite(article, favorites, setFavorites);
   };
