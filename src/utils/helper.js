@@ -11,4 +11,3 @@ export const toggleFavorite = (article, favorites, setFavorites) => {
   localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
 };
 
-export const totalPages = (articles) => Math.ceil(articles.length / 10);
