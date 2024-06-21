@@ -1,4 +1,12 @@
-const Card = ({ src, title, description, url }) => {
+const Card = ({
+  src,
+  title,
+  description,
+  url,
+  isFavorite,
+  toggleFavorite,
+  showFavoriteButton,
+}) => {
   return (
     <div className="custom-card">
       <img
@@ -13,10 +21,20 @@ const Card = ({ src, title, description, url }) => {
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <p className="card-text">{description}</p>
-        <a href={url} target="_blank" className="btn btn-primary">
-          Read more
-        </a>
-        <button className="btn btn-secondary"><i className='bx bxs-heart' ></i></button>
+        <div className="card-buttons">
+          <a href={url} target="_blank" className="btn btn-primary">
+            Read more
+          </a>
+          {showFavoriteButton && (
+            <button className="btn btn-secondary" onClick={toggleFavorite}>
+              {isFavorite ? (
+                <i className="bx bxs-minus-circle"></i>
+              ) : (
+                <i className="bx bxs-heart"></i>
+              )}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

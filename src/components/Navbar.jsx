@@ -1,4 +1,8 @@
-const Navbar = ({setCategory}) => {
+const Navbar = ({ setCategory, setShowFavorites }) => {
+  const handleCategoryClick = (category) => {
+    setShowFavorites(false);
+    setCategory(category);
+  };
   return (
     <header className="header">
       <a href="#" className="logo">
@@ -10,20 +14,38 @@ const Navbar = ({setCategory}) => {
         <i className="bx bx-x" id="close-icon"></i>
       </label>
       <nav className="navbar">
-        <div  style={{ "--i": 0 }} onClick={() => setCategory("technology")}>
+        <div
+          style={{ "--i": 0 }}
+          onClick={() => handleCategoryClick("general")}
+        >
+          All
+        </div>
+        <div
+          style={{ "--i": 1 }}
+          onClick={() => handleCategoryClick("technology")}
+        >
           Technology
         </div>
-        <div href="#" style={{ "--i": 1 }} onClick={() => setCategory("business")}>
+        <div
+          style={{ "--i": 2 }}
+          onClick={() => handleCategoryClick("business")}
+        >
           Business
         </div>
-        <div href="#" style={{ "--i": 2 }} onClick={() => setCategory("health")}>
+        <div style={{ "--i": 3 }} onClick={() => handleCategoryClick("health")}>
           Health
         </div>
-        <div href="#" style={{ "--i": 3 }} onClick={() => setCategory("sports")}>
+        <div style={{ "--i": 4 }} onClick={() => handleCategoryClick("sports")}>
           Sports
         </div>
-        <div href="#" style={{ "--i": 4 }} onClick={() => setCategory("entertainment")}>
-          Entertainment 
+        <div
+          style={{ "--i": 5 }}
+          onClick={() => handleCategoryClick("entertainment")}
+        >
+          Entertainment
+        </div>
+        <div style={{ "--i": 6 }} onClick={() => setShowFavorites(true)}>
+          Favorites
         </div>
       </nav>
     </header>

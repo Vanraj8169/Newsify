@@ -1,46 +1,46 @@
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Shimmer from "./Shimmer";
+import Favorites from "./Favorites";
+import { fetchNews, toggleFavorite, totalPages } from "../utils/helper";
+
 const News = ({ category }) => {
   const [articles, setArticles] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const fetchNews = async (search = "") => {
-    try {
-      const url = search
-        ? `https://newsapi.org/v2/everything?q=${search}&apiKey=${
-            import.meta.env.VITE_API_KEY
-          }`
-        : `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${
-            import.meta.env.VITE_API_KEY
-          }`;
 
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      const filteredArticles = data.articles.filter(
-        (article) => article.author !== null
-      );
-      setArticles(filteredArticles);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
   useEffect(() => {
-    fetchNews();
-  }, [category]);
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(storedFavorites);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchNews(category, searchQuery);
+        setArticles(data);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [category, searchQuery]);
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     fetchNews(searchQuery);
   };
-  const totalPages = Math.ceil(articles.length / 10);
+  const handleToggleFavorite = (article) => {
+    toggleFavorite(article, favorites, setFavorites);
+  };
 
   const selectedPageHandler = (selectedPage) => {
     if (
@@ -71,7 +71,7 @@ const News = ({ category }) => {
               <Shimmer key={index} />
             ))}
           </>
-        ) : (
+        ) : articles.length > 0 ? (
           articles
             .slice(page * 10 - 10, page * 10)
             .map((article, index) => (
@@ -81,8 +81,13 @@ const News = ({ category }) => {
                 description={article.description}
                 src={article.urlToImage}
                 url={article.url}
+                isFavorite={favorites.some((fav) => fav.url === article.url)}
+                toggleFavorite={() => handleToggleFavorite(article)}
+                showFavoriteButton={true}
               />
             ))
+        ) : (
+          <p className="no-article-found">No articles found</p>
         )}
       </div>
       {articles.length > 0 && (
