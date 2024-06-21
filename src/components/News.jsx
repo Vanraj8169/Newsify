@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Shimmer from "./Shimmer";
 import Favorites from "./Favorites";
-import { fetchNews, toggleFavorite, totalPages } from "../utils/helper";
+import {toggleFavorite, totalPages } from "../utils/helper";
 
 const News = ({ category }) => {
   const [articles, setArticles] = useState([]);
@@ -17,21 +17,34 @@ const News = ({ category }) => {
     setFavorites(storedFavorites);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchNews(category, searchQuery);
-        setArticles(data);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setIsLoading(false);
-      }
-    };
+  const fetchNews = async (search = "") => {
+    try {
+      const url = search
+        ? `https://newsapi.org/v2/everything?q=${search}&apiKey=${
+            import.meta.env.VITE_API_KEY
+          }`
+        : `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${
+            import.meta.env.VITE_API_KEY
+          }`;
 
-    fetchData();
-  }, [category, searchQuery]);
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      const filteredArticles = data.articles.filter(
+        (article) => article.author !== null
+      );
+      setArticles(filteredArticles);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+  useEffect(() => {
+    fetchNews();
+  }, [category]);
 
   const handleSearch = (e) => {
     e.preventDefault();
